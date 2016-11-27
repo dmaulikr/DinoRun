@@ -125,3 +125,8 @@ extension CGFloat {
   }
 }
 
+extension CGPoint {
+  func distance(_ point: CGPoint) -> CGFloat {
+    return abs(CGFloat(hypotf(Float(point.x - x), Float(point.y - y))))
+  }
+}

@@ -9,17 +9,15 @@
 import SpriteKit
 
 class GameScene: SKScene {
-  let player = SKSpriteNode(imageNamed: "eIdle1")
+  let player = Dinosaur(dinosaurType: .stegosaurus)
   let cameraNode = SKCameraNode()
   let playableRect: CGRect
   let playerRotateRadiansPerSec:CGFloat = 4.0 * π
   let playerMovePointsPerSec: CGFloat = 700.0
   let eggMovePointsPerSec: CGFloat = 700.0
-  let playerIdleAnimation: SKAction
-  let playerWalkingAnimation: SKAction
   let enemyRunningAnimation: SKAction
   let roarSound: SKAction = SKAction.playSoundFileNamed("roar.mp3", waitForCompletion: false)
-  let cameraMovePointsPerSec: CGFloat = 200.0
+  let cameraMovePointsPerSec: CGFloat = 0
   var lastUpdateTime: TimeInterval = 0
   var dt: TimeInterval = 0
   var velocity = CGPoint.zero
@@ -29,22 +27,22 @@ class GameScene: SKScene {
   var lives = 5
   var gameOver = false
   
+  let container = SKSpriteNode(imageNamed: "container")
+  let controller = SKSpriteNode(imageNamed: "controller")
+  var panGeRec: UIPanGestureRecognizer!
+  var containerWidthAndHeight: CGFloat!
+  var controllerMoving = false
+  var controllerPosition: CGPoint!
+  var currentDirection = Direction()
+  var lastDirection = Direction()
+
+  
   override init(size: CGSize) {
     let maxAspectRatio:CGFloat = 16.0/9.0
     let playableHeight = size.width / maxAspectRatio
     let playableMargin = (size.height-playableHeight)/2.0
     playableRect = CGRect(x: 0, y: playableMargin, width: size.width, height: playableHeight)
     var textures:[SKTexture] = []
-    for i in 1...10 {
-      textures.append(SKTexture(imageNamed: "eIdle\(i)"))
-    }
-    playerIdleAnimation = SKAction.animate(with: textures, timePerFrame: 0.1)
-    textures = []
-    for i in 1...10 {
-      textures.append(SKTexture(imageNamed: "eWalk\(i)"))
-    }
-    playerWalkingAnimation = SKAction.animate(with: textures, timePerFrame: 0.1)
-    textures = []
     for i in 1...8 {
       textures.append(SKTexture(imageNamed: "wRun\(i)"))
     }
@@ -71,11 +69,28 @@ class GameScene: SKScene {
     player.yScale = 0.5
     player.zPosition = 100.0
     addChild(player)
-    player.run(SKAction.repeatForever(playerIdleAnimation))
     run(SKAction.repeatForever(SKAction.sequence([SKAction.run(spawnEnemy), SKAction.wait(forDuration: 2.0)])))
     run(SKAction.repeatForever(SKAction.sequence([SKAction.run(spawnEgg), SKAction.wait(forDuration: 1.0)])))
     addChild(cameraNode)
     camera = cameraNode
+    
+    container.xScale = 3.0
+    container.yScale = 3.0
+    controller.xScale = 3.0
+    controller.yScale = 3.0
+    containerWidthAndHeight = container.size.width
+    controllerPosition = CGPoint(x: containerWidthAndHeight, y: view.frame.size.height)
+    container.position = controllerPosition
+    container.zPosition = 1.0
+    addChild(container)
+    controller.zPosition = 2.0
+    controller.position = controllerPosition
+    addChild(controller)
+    
+    panGeRec = UIPanGestureRecognizer(target: self, action: #selector(GameScene.handlePan(_:)))
+    view.addGestureRecognizer(panGeRec)
+    
+    
     //cameraNode.position = CGPoint(x: size.width/2, y: size.height/2)
     setCameraPosition(position: CGPoint(x: size.width/2, y: size.height/2))
   }
@@ -87,14 +102,6 @@ class GameScene: SKScene {
       dt = 0
     }
     lastUpdateTime = currentTime
-    moveSprite(player, velocity: velocity)
-    rotateSprite(player, direction: velocity, rotateRadiansPerSec: playerRotateRadiansPerSec)
-    boundsCheckPlayer()
-    if !idling && velocity == CGPoint.zero {
-      idling = true
-      player.removeAction(forKey: "walking")
-      player.run(SKAction.repeatForever(playerIdleAnimation), withKey: "idle")
-    }
     moveTrain()
     moveCamera()
     if lives <= 0 && !gameOver {
@@ -107,6 +114,38 @@ class GameScene: SKScene {
       view?.presentScene(gameOverScene, transition: reveal)
     }
     //cameraNode.position = player.position
+    
+    if !controllerMoving {
+      controller.run(SKAction.move(to: controllerPosition, duration: 0.3))
+      lastDirection = currentDirection
+      currentDirection = .center
+    }
+    else {
+      let playerDelta: CGFloat = 15.0
+      switch(currentDirection) {
+      case .error:
+        fatalError("Erroneous direction.")
+      case .center:
+        break
+      case .east:
+        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y)
+      case .northeast:
+        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y + playerDelta)
+      case .north:
+        player.position = CGPoint(x: player.position.x, y: player.position.y + playerDelta)
+      case .northwest:
+        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y + playerDelta)
+      case .west:
+        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y)
+      case .southwest:
+        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y - playerDelta)
+      case .south:
+        player.position = CGPoint(x: player.position.x, y: player.position.y - playerDelta)
+      case .southeast:
+        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y - playerDelta)
+      }
+    }
+
   }
   
   override func didEvaluateActions()  {
@@ -140,22 +179,9 @@ class GameScene: SKScene {
     }
   }
   
-  func moveSprite(_ sprite: SKSpriteNode, velocity: CGPoint) {
-    let amountToMove = velocity * CGFloat(dt)
-    sprite.position += amountToMove
-  }
-  
-  func movePlayerToward(_ location: CGPoint) {
-    let offset = location - player.position
-    let direction = offset.normalized()
-    velocity = direction * playerMovePointsPerSec
-  }
-  
   func boundsCheckPlayer() {
-    let bottomLeft = CGPoint(x: cameraRect.minX,
-                             y: cameraRect.minY)
-    let topRight = CGPoint(x: cameraRect.maxX,
-                           y: cameraRect.maxY)
+    let bottomLeft = CGPoint(x: cameraRect.minX, y: cameraRect.minY)
+    let topRight = CGPoint(x: cameraRect.maxX, y: cameraRect.maxY)
     if player.position.x >= topRight.x {
       player.position.x = topRight.x
       velocity.x = -velocity.x
@@ -193,42 +219,12 @@ class GameScene: SKScene {
     }
   }
   
-  func sceneTouched(_ touchLocation: CGPoint) {
-    lastTouchLocation = touchLocation
-    movePlayerToward(touchLocation)
-  }
-  
-  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard let touch = touches.first else {
-      return
-    }
-    let touchLocation = touch.location(in: self)
-    sceneTouched(touchLocation)
-    player.removeAction(forKey: "walking")
-    player.removeAction(forKey: "idle")
-    player.run(SKAction.repeatForever(playerWalkingAnimation), withKey: "walking")
-    idling = false
-  }
-  
-  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard let touch = touches.first else {
-      return
-    }
-    let touchLocation = touch.location(in: self)
-    sceneTouched(touchLocation)
-  }
-  
-  func rotateSprite(_ sprite: SKSpriteNode, direction: CGPoint, rotateRadiansPerSec: CGFloat) {
-    let shortest = shortestAngleBetween(sprite.zRotation, angle2: velocity.angle)
-    let amountToRotate = min(rotateRadiansPerSec * CGFloat(dt), abs(shortest))
-    sprite.zRotation += shortest.sign() * amountToRotate
-  }
-  
   func spawnEnemy() {
-    let enemy = SKSpriteNode(imageNamed: "enemy")
+    let enemy = Dinosaur(dinosaurType: .raptor)
+    enemy.setState(dinosaurState: .run, direction: .west)
     enemy.name = "enemy"
-    enemy.xScale = 0.7
-    enemy.yScale = 0.7
+    enemy.xScale = 2.0
+    enemy.yScale = 2.0
     enemy.position = CGPoint(
       x: cameraRect.maxX + enemy.size.width/2,
       y: CGFloat.random(
@@ -237,7 +233,8 @@ class GameScene: SKScene {
     enemy.zPosition = 50
     addChild(enemy)
     enemy.run(SKAction.repeatForever(enemyRunningAnimation))
-    let actionMove = SKAction.moveBy(x: -size.width-enemy.size.width*2, y: 0, duration: 3.0)
+    let enemyMoveDuration: TimeInterval = 5.0
+    let actionMove = SKAction.moveBy(x: -size.width-enemy.size.width*2, y: 0, duration: enemyMoveDuration)
     let actionRemove = SKAction.removeFromParent()
     enemy.run(SKAction.sequence([actionMove, actionRemove]))
 
@@ -361,8 +358,7 @@ class GameScene: SKScene {
   }
   
   func moveCamera() {
-    let backgroundVelocity =
-      CGPoint(x: cameraMovePointsPerSec, y: 0)
+    let backgroundVelocity = CGPoint(x: cameraMovePointsPerSec, y: 0)
     let amountToMove = backgroundVelocity * CGFloat(dt)
     cameraNode.position += amountToMove
     enumerateChildNodes(withName: "background") { node, _ in
@@ -384,5 +380,45 @@ class GameScene: SKScene {
         + (size.height - playableRect.height)/2,
       width: playableRect.width,
       height: playableRect.height)
+  }
+  
+  @IBAction func handlePan(_ recognizer:UIPanGestureRecognizer) {
+    let location = recognizer.location(in: view)
+    let locationInScene = (scene?.convertPoint(fromView: location))!
+    let distanceFromControllerPosition = controllerPosition.distance(locationInScene)
+    if distanceFromControllerPosition < 120 {
+      controller.position = locationInScene
+      let p1 = CGPoint(x: controllerPosition.x + distanceFromControllerPosition, y: controllerPosition.y)
+      let p2 = locationInScene
+      let v1 = CGVector(dx: p1.x - controllerPosition.x, dy: p1.y - controllerPosition.y)
+      let v2 = CGVector(dx: p2.x - controllerPosition.x, dy: p2.y - controllerPosition.y)
+      let angle = atan2(v2.dy, v2.dx) - atan2(v1.dy, v1.dx)
+      var degrees = angle * CGFloat(180.0 / M_PI)
+      if degrees < 0 {
+        degrees += 360.0
+      }
+      currentDirection.setDirection(degrees)
+      lastDirection = currentDirection
+    }
+    
+    switch(recognizer.state) {
+    case .began:
+      controllerMoving = true
+      player.setState(dinosaurState: .walk, direction: currentDirection)
+    case .changed:
+      controllerMoving = true
+      player.setState(dinosaurState: .walk, direction: currentDirection)
+    case .ended:
+      controllerMoving = false
+      player.setState(dinosaurState: .idle, direction: currentDirection)
+    case .cancelled:
+      controllerMoving = false
+      player.setState(dinosaurState: .idle, direction: currentDirection)
+    case .failed:
+      controllerMoving = false
+      player.setState(dinosaurState: .idle, direction: currentDirection)
+    case .possible:
+      fatalError("invalid gesture state")
+    }
   }
 }
