@@ -144,6 +144,9 @@ class GameScene: SKScene {
       case .southeast:
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y - playerDelta)
       }
+      let bottomLeft = CGPoint(x: cameraRect.minX, y: cameraRect.minY)
+      let topRight = CGPoint(x: cameraRect.maxX, y: cameraRect.maxY)
+      print("player: \(player.position) bottomLeft: \(bottomLeft) topRight: \(topRight)")
     }
 
   }
@@ -223,8 +226,6 @@ class GameScene: SKScene {
     let enemy = Dinosaur(dinosaurType: .raptor)
     enemy.setState(dinosaurState: .run, direction: .west)
     enemy.name = "enemy"
-    enemy.xScale = 2.0
-    enemy.yScale = 2.0
     enemy.position = CGPoint(
       x: cameraRect.maxX + enemy.size.width/2,
       y: CGFloat.random(
@@ -363,11 +364,8 @@ class GameScene: SKScene {
     cameraNode.position += amountToMove
     enumerateChildNodes(withName: "background") { node, _ in
       let background = node as! SKSpriteNode
-      if background.position.x + background.size.width <
-        self.cameraRect.origin.x {
-        background.position = CGPoint(
-          x: background.position.x + background.size.width*2,
-          y: background.position.y)
+      if background.position.x + background.size.width < self.cameraRect.origin.x {
+        background.position = CGPoint(x: background.position.x + background.size.width*2, y: background.position.y)
       }
     }
   }

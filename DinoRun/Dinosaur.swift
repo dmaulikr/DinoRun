@@ -31,13 +31,13 @@ class Dinosaur: SKSpriteNode {
   fileprivate var eastDeadTextures: [SKTexture] = []
   fileprivate var westDeadTextures: [SKTexture] = []
   fileprivate var westRunTextures: [SKTexture] = []
-  fileprivate let eastIdleAnimation: SKAction
-  fileprivate let westIdleAnimation: SKAction
-  fileprivate let eastWalkAnimation: SKAction
-  fileprivate let westWalkAnimation: SKAction
-  fileprivate let eastDeadAnimation: SKAction
-  fileprivate let westDeadAnimation: SKAction
-  fileprivate let westRunAnimation: SKAction
+  fileprivate let eastIdleAnimation: SKAction!
+  fileprivate let westIdleAnimation: SKAction!
+  fileprivate let eastWalkAnimation: SKAction!
+  fileprivate let westWalkAnimation: SKAction!
+  fileprivate let eastDeadAnimation: SKAction!
+  fileprivate let westDeadAnimation: SKAction!
+  fileprivate let westRunAnimation: SKAction!
   fileprivate let stegosaurusTextureCount = 10
   fileprivate let raptorTextureCount = 8
   fileprivate let timePerFrame: TimeInterval = 0.1
@@ -45,33 +45,38 @@ class Dinosaur: SKSpriteNode {
   
   init(dinosaurType: DinosaurType) {
     self.dinosaurType = dinosaurType
-    let textureAtlas = SKTextureAtlas(named: dinosaurType.rawValue)
-    
-    for i in 1...stegosaurusTextureCount {
-      eastIdleTextures.append(textureAtlas.textureNamed("eIdle\(i).png"))
-      westIdleTextures.append(textureAtlas.textureNamed("wIdle\(i).png"))
-      eastWalkTextures.append(textureAtlas.textureNamed("eWalk\(i).png"))
-      westWalkTextures.append(textureAtlas.textureNamed("wWalk\(i).png"))
-      eastDeadTextures.append(textureAtlas.textureNamed("eDead\(i).png"))
-      westDeadTextures.append(textureAtlas.textureNamed("wDead\(i).png"))
-    }
-
-    for i in 1...raptorTextureCount {
-      westRunTextures.append(textureAtlas.textureNamed("wRun\(i).png"))
-    }
-    
-    eastIdleAnimation = SKAction.animate(with: eastIdleTextures, timePerFrame: timePerFrame)
-    westIdleAnimation = SKAction.animate(with: westIdleTextures, timePerFrame: timePerFrame)
-    eastWalkAnimation = SKAction.animate(with: eastWalkTextures, timePerFrame: timePerFrame)
-    westWalkAnimation = SKAction.animate(with: westWalkTextures, timePerFrame: timePerFrame)
-    eastDeadAnimation = SKAction.animate(with: eastDeadTextures, timePerFrame: timePerFrame)
-    westDeadAnimation = SKAction.animate(with: westDeadTextures, timePerFrame: timePerFrame)
-    westRunAnimation = SKAction.animate(with: westRunTextures, timePerFrame: timePerFrame)
     switch dinosaurType {
     case .stegosaurus:
+      let stegosaurusAtlas = SKTextureAtlas(named: dinosaurType.rawValue)
+      for i in 1...stegosaurusTextureCount {
+        eastIdleTextures.append(stegosaurusAtlas.textureNamed("eIdle\(i).png"))
+        westIdleTextures.append(stegosaurusAtlas.textureNamed("wIdle\(i).png"))
+        eastWalkTextures.append(stegosaurusAtlas.textureNamed("eWalk\(i).png"))
+        westWalkTextures.append(stegosaurusAtlas.textureNamed("wWalk\(i).png"))
+        eastDeadTextures.append(stegosaurusAtlas.textureNamed("eDead\(i).png"))
+        westDeadTextures.append(stegosaurusAtlas.textureNamed("wDead\(i).png"))
+      }
+      eastIdleAnimation = SKAction.animate(with: eastIdleTextures, timePerFrame: timePerFrame)
+      westIdleAnimation = SKAction.animate(with: westIdleTextures, timePerFrame: timePerFrame)
+      eastWalkAnimation = SKAction.animate(with: eastWalkTextures, timePerFrame: timePerFrame)
+      westWalkAnimation = SKAction.animate(with: westWalkTextures, timePerFrame: timePerFrame)
+      eastDeadAnimation = SKAction.animate(with: eastDeadTextures, timePerFrame: timePerFrame)
+      westDeadAnimation = SKAction.animate(with: westDeadTextures, timePerFrame: timePerFrame)
+      westRunAnimation = nil
       super.init(texture: eastIdleTextures[0], color: UIColor.black, size: eastIdleTextures[0].size())
       setState(dinosaurState: .idle, direction: .east)
     case .raptor:
+      let raptorAtlas = SKTextureAtlas(named: dinosaurType.rawValue)
+      for i in 1...raptorTextureCount {
+        westRunTextures.append(raptorAtlas.textureNamed("wRun\(i).png"))
+      }
+      westRunAnimation = SKAction.animate(with: westRunTextures, timePerFrame: timePerFrame)
+      eastIdleAnimation = nil
+      westIdleAnimation = nil
+      eastWalkAnimation = nil
+      westWalkAnimation = nil
+      eastDeadAnimation = nil
+      westDeadAnimation = nil
       super.init(texture: westRunTextures[0], color: UIColor.black, size: westRunTextures[0].size())
       setState(dinosaurState: .run, direction: .west)
     }

@@ -11,6 +11,7 @@
 		E18F91E71DEB59570054D68A /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F91E61DEB59570054D68A /* Direction.swift */; };
 		E18F91E91DEB5F100054D68A /* Dinosaur.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F91E81DEB5F100054D68A /* Dinosaur.swift */; };
 		E18F92651DEB66F60054D68A /* Stegosaurus.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E18F92641DEB66F60054D68A /* Stegosaurus.atlas */; };
+		E18F92671DEB85EC0054D68A /* Raptor.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E18F92661DEB85EC0054D68A /* Raptor.atlas */; };
 		E1F62D8C1DD9655F00C49D24 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */; };
 		E1F62D901DDA075A00C49D24 /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E1F62D8D1DDA075A00C49D24 /* backgroundMusic.mp3 */; };
 		E1F62D911DDA075A00C49D24 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = E1F62D8E1DDA075A00C49D24 /* lose.wav */; };
@@ -30,6 +31,7 @@
 		E18F91E61DEB59570054D68A /* Direction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		E18F91E81DEB5F100054D68A /* Dinosaur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dinosaur.swift; sourceTree = "<group>"; };
 		E18F92641DEB66F60054D68A /* Stegosaurus.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Stegosaurus.atlas; sourceTree = "<group>"; };
+		E18F92661DEB85EC0054D68A /* Raptor.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Raptor.atlas; sourceTree = "<group>"; };
 		E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		E1F62D8D1DDA075A00C49D24 /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
 		E1F62D8E1DDA075A00C49D24 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				E1FBAD851D9ABF9100691514 /* Info.plist */,
 				E1FBAD8B1D9B15FD00691514 /* MyUtils.swift */,
 				E1F62D931DDA226800C49D24 /* MainMenuScene.swift */,
+				E18F92661DEB85EC0054D68A /* Raptor.atlas */,
 				E18F91E41DEA47F20054D68A /* roar.mp3 */,
 				E1F62D8D1DDA075A00C49D24 /* backgroundMusic.mp3 */,
 				E1F62D8E1DDA075A00C49D24 /* lose.wav */,
@@ -161,6 +164,7 @@
 				E18F91E51DEA47F20054D68A /* roar.mp3 in Resources */,
 				E1FBAD841D9ABF9100691514 /* LaunchScreen.storyboard in Resources */,
 				E1FBAD811D9ABF9100691514 /* Assets.xcassets in Resources */,
+				E18F92671DEB85EC0054D68A /* Raptor.atlas in Resources */,
 				E1F62D911DDA075A00C49D24 /* lose.wav in Resources */,
 				E1F62D901DDA075A00C49D24 /* backgroundMusic.mp3 in Resources */,
 				E1FBAD7F1D9ABF9100691514 /* Main.storyboard in Resources */,
