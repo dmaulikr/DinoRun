@@ -87,16 +87,8 @@ class GameScene: SKScene {
       dt = 0
     }
     lastUpdateTime = currentTime
-//    if let lastTouchLocation = lastTouchLocation {
-//      let diff = lastTouchLocation - player.position
-//      if (diff.length() <= playerMovePointsPerSec * CGFloat(dt)) {
-//        player.position = lastTouchLocation
-//        velocity = CGPoint.zero
-//      } else {
-        moveSprite(player, velocity: velocity)
-        rotateSprite(player, direction: velocity, rotateRadiansPerSec: playerRotateRadiansPerSec)
-//      }
-//    }
+    moveSprite(player, velocity: velocity)
+    rotateSprite(player, direction: velocity, rotateRadiansPerSec: playerRotateRadiansPerSec)
     boundsCheckPlayer()
     if !idling && velocity == CGPoint.zero {
       idling = true
@@ -254,11 +246,8 @@ class GameScene: SKScene {
   func spawnEgg() {
     let egg = SKSpriteNode(imageNamed: "egg")
     egg.name = "egg"
-    egg.position = CGPoint(
-      x: CGFloat.random(min: cameraRect.minX,
-                        max: cameraRect.maxX),
-      y: CGFloat.random(min: cameraRect.minY,
-                        max: cameraRect.maxY))
+    egg.position = CGPoint(x: CGFloat.random(min: cameraRect.minX, max: cameraRect.maxX),
+                           y: CGFloat.random(min: cameraRect.minY, max: cameraRect.maxY))
     egg.zPosition = 50
     egg.setScale(0)
     addChild(egg)
@@ -322,8 +311,7 @@ class GameScene: SKScene {
       var hitEnemies: [SKSpriteNode] = []
       enumerateChildNodes(withName: "enemy") { node, _ in
         let enemy = node as! SKSpriteNode
-        if node.frame.insetBy(dx: 20, dy: 20).intersects(
-          self.player.frame) {
+        if node.frame.insetBy(dx: 20, dy: 20).intersects(self.player.frame) {
           hitEnemies.append(enemy)
         }
       }
@@ -343,17 +331,13 @@ class GameScene: SKScene {
     backgroundNode.addChild(background1)
     let background2 = SKSpriteNode(imageNamed: "background2")
     background2.anchorPoint = CGPoint.zero
-    background2.position =
-      CGPoint(x: background1.size.width, y: 0)
+    background2.position = CGPoint(x: background1.size.width, y: 0)
     backgroundNode.addChild(background2)
     let background3 = SKSpriteNode(imageNamed: "background3")
     background3.anchorPoint = CGPoint.zero
-    background3.position =
-      CGPoint(x: background1.size.width * 2, y: 0)
+    background3.position = CGPoint(x: background1.size.width * 2, y: 0)
     backgroundNode.addChild(background3)
-    backgroundNode.size = CGSize(
-      width: background1.size.width + background2.size.width + background3.size.width,
-      height: background1.size.height)
+    backgroundNode.size = CGSize(width: background1.size.width + background2.size.width + background3.size.width, height: background1.size.height)
     return backgroundNode
   }
   
