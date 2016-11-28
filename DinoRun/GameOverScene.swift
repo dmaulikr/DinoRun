@@ -22,6 +22,7 @@ class GameOverScene: SKScene {
   }
   
   override func didMove(to view: SKView) {
+    scene?.scaleMode = .fill
     var background: SKSpriteNode
     if (won) {
       background = SKSpriteNode(imageNamed: "YouWin")

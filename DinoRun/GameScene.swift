@@ -13,8 +13,8 @@ class GameScene: SKScene {
   let cameraNode = SKCameraNode()
   let playableRect: CGRect
   let playerRotateRadiansPerSec:CGFloat = 4.0 * π
-  let playerMovePointsPerSec: CGFloat = 700.0
-  let eggMovePointsPerSec: CGFloat = 700.0
+  let playerMovePointsPerSec: CGFloat = 300.0
+  let eggMovePointsPerSec: CGFloat = 300.0
   let enemyRunningAnimation: SKAction
   let roarSound: SKAction = SKAction.playSoundFileNamed("roar.mp3", waitForCompletion: false)
   let cameraMovePointsPerSec: CGFloat = 0
@@ -26,7 +26,7 @@ class GameScene: SKScene {
   var playerIsInvincible = false
   var lives = 5
   var gameOver = false
-  
+  var shouldScrollRight = false
   let container = SKSpriteNode(imageNamed: "container")
   let controller = SKSpriteNode(imageNamed: "controller")
   var panGeRec: UIPanGestureRecognizer!
@@ -34,9 +34,7 @@ class GameScene: SKScene {
   var controllerMoving = false
   var controllerPosition: CGPoint!
   var currentDirection = Direction()
-  var lastDirection = Direction()
 
-  
   override init(size: CGSize) {
     let maxAspectRatio:CGFloat = 16.0/9.0
     let playableHeight = size.width / maxAspectRatio
@@ -55,6 +53,7 @@ class GameScene: SKScene {
   }
   
   override func didMove(to view: SKView) {
+    scene?.scaleMode = .aspectFill
     playBackgroundMusic("backgroundMusic.mp3")
     backgroundColor = SKColor.black
     for i in 0...2 {
@@ -106,22 +105,19 @@ class GameScene: SKScene {
     moveCamera()
     if lives <= 0 && !gameOver {
       gameOver = true
-      print("You lose!")
       backgroundMusicPlayer.stop()
       let gameOverScene = GameOverScene(size: size, won: false)
       gameOverScene.scaleMode = scaleMode
       let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
       view?.presentScene(gameOverScene, transition: reveal)
     }
-    //cameraNode.position = player.position
     
-    if !controllerMoving {
-      controller.run(SKAction.move(to: controllerPosition, duration: 0.3))
-      lastDirection = currentDirection
-      currentDirection = .center
-    }
-    else {
-      let playerDelta: CGFloat = 15.0
+    let scrollBuffer: CGFloat = player.size.width / 1.5
+    if controllerMoving {
+      if player.position.x >= cameraRect.maxX - scrollBuffer && (currentDirection == .east || currentDirection == .northeast || currentDirection == .southeast) {
+        shouldScrollRight = true
+      }
+      let playerDelta: CGFloat = CGFloat(dt) * playerMovePointsPerSec
       switch(currentDirection) {
       case .error:
         fatalError("Erroneous direction.")
@@ -133,20 +129,22 @@ class GameScene: SKScene {
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y + playerDelta)
       case .north:
         player.position = CGPoint(x: player.position.x, y: player.position.y + playerDelta)
+        shouldScrollRight = false
       case .northwest:
         player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y + playerDelta)
+        shouldScrollRight = false
       case .west:
         player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y)
+        shouldScrollRight = false
       case .southwest:
         player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y - playerDelta)
+        shouldScrollRight = false
       case .south:
         player.position = CGPoint(x: player.position.x, y: player.position.y - playerDelta)
+        shouldScrollRight = false
       case .southeast:
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y - playerDelta)
       }
-      let bottomLeft = CGPoint(x: cameraRect.minX, y: cameraRect.minY)
-      let topRight = CGPoint(x: cameraRect.maxX, y: cameraRect.maxY)
-      print("player: \(player.position) bottomLeft: \(bottomLeft) topRight: \(topRight)")
     }
 
   }
@@ -173,7 +171,6 @@ class GameScene: SKScene {
     }
     if trainCount >= 10 && !gameOver {
       gameOver = true
-      print("You win!")
       backgroundMusicPlayer.stop()
       let gameOverScene = GameOverScene(size: size, won: true)
       gameOverScene.scaleMode = scaleMode
@@ -226,15 +223,15 @@ class GameScene: SKScene {
     let enemy = Dinosaur(dinosaurType: .raptor)
     enemy.setState(dinosaurState: .run, direction: .west)
     enemy.name = "enemy"
+    enemy.xScale = 0.3
+    enemy.yScale = 0.3
     enemy.position = CGPoint(
       x: cameraRect.maxX + enemy.size.width/2,
-      y: CGFloat.random(
-        min: cameraRect.minY + enemy.size.height/2,
-        max: cameraRect.maxY - enemy.size.height/2))
+      y: CGFloat.random(min: cameraRect.minY + enemy.size.height/2, max: cameraRect.maxY - enemy.size.height/2))
     enemy.zPosition = 50
     addChild(enemy)
     enemy.run(SKAction.repeatForever(enemyRunningAnimation))
-    let enemyMoveDuration: TimeInterval = 5.0
+    let enemyMoveDuration: TimeInterval = 7.0
     let actionMove = SKAction.moveBy(x: -size.width-enemy.size.width*2, y: 0, duration: enemyMoveDuration)
     let actionRemove = SKAction.removeFromParent()
     enemy.run(SKAction.sequence([actionMove, actionRemove]))
@@ -359,25 +356,27 @@ class GameScene: SKScene {
   }
   
   func moveCamera() {
-    let backgroundVelocity = CGPoint(x: cameraMovePointsPerSec, y: 0)
-    let amountToMove = backgroundVelocity * CGFloat(dt)
-    cameraNode.position += amountToMove
-    enumerateChildNodes(withName: "background") { node, _ in
-      let background = node as! SKSpriteNode
-      if background.position.x + background.size.width < self.cameraRect.origin.x {
-        background.position = CGPoint(x: background.position.x + background.size.width*2, y: background.position.y)
+    if shouldScrollRight {
+      let backgroundVelocity = CGPoint(x: playerMovePointsPerSec, y: 0)
+      let amountToMove = backgroundVelocity * CGFloat(dt)
+      cameraNode.position += amountToMove
+      controller.position += amountToMove
+      container.position += amountToMove
+      controllerPosition = container.position
+      enumerateChildNodes(withName: "background") { node, _ in
+        let background = node as! SKSpriteNode
+        if background.position.x + background.size.width < self.cameraRect.origin.x {
+          background.position = CGPoint(x: background.position.x + background.size.width * 3, y: background.position.y)
+        }
       }
     }
   }
   
   var cameraRect : CGRect {
     return CGRect(
-      x: getCameraPosition().x - size.width/2
-        + (size.width - playableRect.width)/2,
-      y: getCameraPosition().y - size.height/2
-        + (size.height - playableRect.height)/2,
-      width: playableRect.width,
-      height: playableRect.height)
+      x: getCameraPosition().x - size.width/2 + (size.width - playableRect.width)/2,
+      y: getCameraPosition().y - size.height/2 + (size.height - playableRect.height)/2,
+      width: playableRect.width, height: playableRect.height)
   }
   
   @IBAction func handlePan(_ recognizer:UIPanGestureRecognizer) {
@@ -396,7 +395,6 @@ class GameScene: SKScene {
         degrees += 360.0
       }
       currentDirection.setDirection(degrees)
-      lastDirection = currentDirection
     }
     
     switch(recognizer.state) {
@@ -408,12 +406,17 @@ class GameScene: SKScene {
       player.setState(dinosaurState: .walk, direction: currentDirection)
     case .ended:
       controllerMoving = false
+      shouldScrollRight = false
       player.setState(dinosaurState: .idle, direction: currentDirection)
+      controller.run(SKAction.move(to: controllerPosition, duration: 0.3))
+      currentDirection = .center
     case .cancelled:
       controllerMoving = false
+      shouldScrollRight = false
       player.setState(dinosaurState: .idle, direction: currentDirection)
     case .failed:
       controllerMoving = false
+      shouldScrollRight = false
       player.setState(dinosaurState: .idle, direction: currentDirection)
     case .possible:
       fatalError("invalid gesture state")
