@@ -17,7 +17,6 @@ class GameScene: SKScene {
   let eggMovePointsPerSec: CGFloat = 300.0
   let enemyRunningAnimation: SKAction
   let roarSound: SKAction = SKAction.playSoundFileNamed("roar.mp3", waitForCompletion: false)
-  let cameraMovePointsPerSec: CGFloat = 0
   var lastUpdateTime: TimeInterval = 0
   var dt: TimeInterval = 0
   var velocity = CGPoint.zero
@@ -27,6 +26,7 @@ class GameScene: SKScene {
   var lives = 5
   var gameOver = false
   var shouldScrollRight = false
+  var shouldScrollLeft = false
   let container = SKSpriteNode(imageNamed: "container")
   let controller = SKSpriteNode(imageNamed: "controller")
   var panGeRec: UIPanGestureRecognizer!
@@ -88,9 +88,7 @@ class GameScene: SKScene {
     
     panGeRec = UIPanGestureRecognizer(target: self, action: #selector(GameScene.handlePan(_:)))
     view.addGestureRecognizer(panGeRec)
-    
-    
-    //cameraNode.position = CGPoint(x: size.width/2, y: size.height/2)
+
     setCameraPosition(position: CGPoint(x: size.width/2, y: size.height/2))
   }
   
@@ -112,10 +110,13 @@ class GameScene: SKScene {
       view?.presentScene(gameOverScene, transition: reveal)
     }
     
-    let scrollBuffer: CGFloat = player.size.width / 1.5
     if controllerMoving {
+      let scrollBuffer: CGFloat = player.size.width / 1.5
       if player.position.x >= cameraRect.maxX - scrollBuffer && (currentDirection == .east || currentDirection == .northeast || currentDirection == .southeast) {
         shouldScrollRight = true
+      }
+      else if player.position.x <= cameraRect.minX + scrollBuffer && (currentDirection == .west || currentDirection == .northwest || currentDirection == .southwest) {
+        shouldScrollLeft = true
       }
       let playerDelta: CGFloat = CGFloat(dt) * playerMovePointsPerSec
       switch(currentDirection) {
@@ -125,11 +126,14 @@ class GameScene: SKScene {
         break
       case .east:
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y)
+        shouldScrollLeft = false
       case .northeast:
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y + playerDelta)
+        shouldScrollLeft = false
       case .north:
         player.position = CGPoint(x: player.position.x, y: player.position.y + playerDelta)
         shouldScrollRight = false
+        shouldScrollLeft = false
       case .northwest:
         player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y + playerDelta)
         shouldScrollRight = false
@@ -142,11 +146,12 @@ class GameScene: SKScene {
       case .south:
         player.position = CGPoint(x: player.position.x, y: player.position.y - playerDelta)
         shouldScrollRight = false
+        shouldScrollLeft = false
       case .southeast:
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y - playerDelta)
+        shouldScrollLeft = false
       }
     }
-
   }
   
   override func didEvaluateActions()  {
@@ -176,23 +181,6 @@ class GameScene: SKScene {
       gameOverScene.scaleMode = scaleMode
       let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
       view?.presentScene(gameOverScene, transition: reveal)
-    }
-  }
-  
-  func boundsCheckPlayer() {
-    let bottomLeft = CGPoint(x: cameraRect.minX, y: cameraRect.minY)
-    let topRight = CGPoint(x: cameraRect.maxX, y: cameraRect.maxY)
-    if player.position.x >= topRight.x {
-      player.position.x = topRight.x
-      velocity.x = -velocity.x
-    }
-    if player.position.y <= bottomLeft.y {
-      player.position.y = bottomLeft.y
-      velocity.y = -velocity.y
-    }
-    if player.position.y >= topRight.y {
-      player.position.y = topRight.y
-      velocity.y = -velocity.y
     }
   }
   
@@ -226,13 +214,14 @@ class GameScene: SKScene {
     enemy.xScale = 0.3
     enemy.yScale = 0.3
     enemy.position = CGPoint(
-      x: cameraRect.maxX + enemy.size.width/2,
-      y: CGFloat.random(min: cameraRect.minY + enemy.size.height/2, max: cameraRect.maxY - enemy.size.height/2))
+      x: cameraRect.maxX + enemy.size.width / 2,
+      y: CGFloat.random(min: cameraRect.minY + enemy.size.height / 2, max: cameraRect.maxY - enemy.size.height/2))
     enemy.zPosition = 50
     addChild(enemy)
     enemy.run(SKAction.repeatForever(enemyRunningAnimation))
     let enemyMoveDuration: TimeInterval = 7.0
-    let actionMove = SKAction.moveBy(x: -size.width-enemy.size.width*2, y: 0, duration: enemyMoveDuration)
+    let screensToMove: CGFloat = 3.0
+    let actionMove = SKAction.moveBy(x: -size.width * screensToMove, y: 0, duration: enemyMoveDuration * TimeInterval(screensToMove))
     let actionRemove = SKAction.removeFromParent()
     enemy.run(SKAction.sequence([actionMove, actionRemove]))
 
@@ -370,6 +359,20 @@ class GameScene: SKScene {
         }
       }
     }
+    else if shouldScrollLeft {
+      let backgroundVelocity = CGPoint(x: playerMovePointsPerSec, y: 0)
+      let amountToMove = backgroundVelocity * CGFloat(dt)
+      cameraNode.position -= amountToMove
+      controller.position -= amountToMove
+      container.position -= amountToMove
+      controllerPosition = container.position
+      enumerateChildNodes(withName: "background") { node, _ in
+        let background = node as! SKSpriteNode
+        if background.position.x - background.size.width > self.cameraRect.origin.x {
+          background.position = CGPoint(x: background.position.x - background.size.width * 3, y: background.position.y)
+        }
+      }
+    }
   }
   
   var cameraRect : CGRect {
@@ -398,26 +401,16 @@ class GameScene: SKScene {
     }
     
     switch(recognizer.state) {
-    case .began:
+    case .began, .changed:
       controllerMoving = true
       player.setState(dinosaurState: .walk, direction: currentDirection)
-    case .changed:
-      controllerMoving = true
-      player.setState(dinosaurState: .walk, direction: currentDirection)
-    case .ended:
+    case .ended, .cancelled, .failed:
       controllerMoving = false
       shouldScrollRight = false
+      shouldScrollLeft = false
       player.setState(dinosaurState: .idle, direction: currentDirection)
       controller.run(SKAction.move(to: controllerPosition, duration: 0.3))
       currentDirection = .center
-    case .cancelled:
-      controllerMoving = false
-      shouldScrollRight = false
-      player.setState(dinosaurState: .idle, direction: currentDirection)
-    case .failed:
-      controllerMoving = false
-      shouldScrollRight = false
-      player.setState(dinosaurState: .idle, direction: currentDirection)
     case .possible:
       fatalError("invalid gesture state")
     }
