@@ -85,10 +85,8 @@ class GameScene: SKScene {
     controller.zPosition = 2.0
     controller.position = controllerPosition
     addChild(controller)
-    
     panGeRec = UIPanGestureRecognizer(target: self, action: #selector(GameScene.handlePan(_:)))
     view.addGestureRecognizer(panGeRec)
-
     setCameraPosition(position: CGPoint(x: size.width/2, y: size.height/2))
   }
   
@@ -119,6 +117,10 @@ class GameScene: SKScene {
         shouldScrollLeft = true
       }
       let playerDelta: CGFloat = CGFloat(dt) * playerMovePointsPerSec
+      var yDelta = playerDelta
+      let limitMultiplier: CGFloat = 0.67
+      let bottomLimit = player.size.height * limitMultiplier
+      let topLimit = cameraRect.maxY - player.size.height / limitMultiplier
       switch(currentDirection) {
       case .error:
         fatalError("Erroneous direction.")
@@ -128,27 +130,45 @@ class GameScene: SKScene {
         player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y)
         shouldScrollLeft = false
       case .northeast:
-        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y + playerDelta)
+        if player.position.y > topLimit {
+          yDelta = 0.0
+        }
+        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y + yDelta)
         shouldScrollLeft = false
       case .north:
-        player.position = CGPoint(x: player.position.x, y: player.position.y + playerDelta)
+        if player.position.y > topLimit {
+          yDelta = 0.0
+        }
+        player.position = CGPoint(x: player.position.x, y: player.position.y + yDelta)
         shouldScrollRight = false
         shouldScrollLeft = false
       case .northwest:
-        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y + playerDelta)
+        if player.position.y > topLimit {
+          yDelta = 0.0
+        }
+        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y + yDelta)
         shouldScrollRight = false
       case .west:
         player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y)
         shouldScrollRight = false
       case .southwest:
-        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y - playerDelta)
+        if player.position.y < bottomLimit {
+          yDelta = 0.0
+        }
+        player.position = CGPoint(x: player.position.x - playerDelta, y: player.position.y - yDelta)
         shouldScrollRight = false
       case .south:
-        player.position = CGPoint(x: player.position.x, y: player.position.y - playerDelta)
+        if player.position.y < bottomLimit {
+          yDelta = 0.0
+        }
+        player.position = CGPoint(x: player.position.x, y: player.position.y - yDelta)
         shouldScrollRight = false
         shouldScrollLeft = false
       case .southeast:
-        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y - playerDelta)
+        if player.position.y < bottomLimit {
+          yDelta = 0.0
+        }
+        player.position = CGPoint(x: player.position.x + playerDelta, y: player.position.y - yDelta)
         shouldScrollLeft = false
       }
     }
@@ -224,7 +244,6 @@ class GameScene: SKScene {
     let actionMove = SKAction.moveBy(x: -size.width * screensToMove, y: 0, duration: enemyMoveDuration * TimeInterval(screensToMove))
     let actionRemove = SKAction.removeFromParent()
     enemy.run(SKAction.sequence([actionMove, actionRemove]))
-
   }
   
   func spawnEgg() {
