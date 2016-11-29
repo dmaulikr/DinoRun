@@ -54,7 +54,7 @@ class GameScene: SKScene {
   
   override func didMove(to view: SKView) {
     scene?.scaleMode = .aspectFill
-    playBackgroundMusic("backgroundMusic.mp3")
+    playBackgroundMusic("backgroundMusic.mp3") // currently "Shenyang" by Kevin MacCleod
     backgroundColor = SKColor.black
     for i in 0...2 {
       let background = backgroundNode()

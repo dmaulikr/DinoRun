@@ -12,8 +12,8 @@
 		E18F91E91DEB5F100054D68A /* Dinosaur.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F91E81DEB5F100054D68A /* Dinosaur.swift */; };
 		E18F92651DEB66F60054D68A /* Stegosaurus.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E18F92641DEB66F60054D68A /* Stegosaurus.atlas */; };
 		E18F92671DEB85EC0054D68A /* Raptor.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E18F92661DEB85EC0054D68A /* Raptor.atlas */; };
+		E1E2D3001DED2FB300B8ECED /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */; };
 		E1F62D8C1DD9655F00C49D24 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */; };
-		E1F62D901DDA075A00C49D24 /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E1F62D8D1DDA075A00C49D24 /* backgroundMusic.mp3 */; };
 		E1F62D911DDA075A00C49D24 /* lose.wav in Resources */ = {isa = PBXBuildFile; fileRef = E1F62D8E1DDA075A00C49D24 /* lose.wav */; };
 		E1F62D921DDA075A00C49D24 /* win.wav in Resources */ = {isa = PBXBuildFile; fileRef = E1F62D8F1DDA075A00C49D24 /* win.wav */; };
 		E1F62D941DDA226800C49D24 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F62D931DDA226800C49D24 /* MainMenuScene.swift */; };
@@ -32,8 +32,8 @@
 		E18F91E81DEB5F100054D68A /* Dinosaur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dinosaur.swift; sourceTree = "<group>"; };
 		E18F92641DEB66F60054D68A /* Stegosaurus.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Stegosaurus.atlas; sourceTree = "<group>"; };
 		E18F92661DEB85EC0054D68A /* Raptor.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Raptor.atlas; sourceTree = "<group>"; };
+		E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
 		E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
-		E1F62D8D1DDA075A00C49D24 /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
 		E1F62D8E1DDA075A00C49D24 /* lose.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = lose.wav; sourceTree = "<group>"; };
 		E1F62D8F1DDA075A00C49D24 /* win.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = win.wav; sourceTree = "<group>"; };
 		E1F62D931DDA226800C49D24 /* MainMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
@@ -91,9 +91,9 @@
 				E1FBAD851D9ABF9100691514 /* Info.plist */,
 				E1FBAD8B1D9B15FD00691514 /* MyUtils.swift */,
 				E1F62D931DDA226800C49D24 /* MainMenuScene.swift */,
+				E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */,
 				E18F92661DEB85EC0054D68A /* Raptor.atlas */,
 				E18F91E41DEA47F20054D68A /* roar.mp3 */,
-				E1F62D8D1DDA075A00C49D24 /* backgroundMusic.mp3 */,
 				E1F62D8E1DDA075A00C49D24 /* lose.wav */,
 				E1F62D8F1DDA075A00C49D24 /* win.wav */,
 			);
@@ -132,6 +132,7 @@
 				TargetAttributes = {
 					E1FBAD711D9ABF9000691514 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = V3L2PL4QC9;
 						LastSwiftMigration = 0800;
 					};
 				};
@@ -161,12 +162,12 @@
 			files = (
 				E1F62D921DDA075A00C49D24 /* win.wav in Resources */,
 				E18F92651DEB66F60054D68A /* Stegosaurus.atlas in Resources */,
+				E1E2D3001DED2FB300B8ECED /* backgroundMusic.mp3 in Resources */,
 				E18F91E51DEA47F20054D68A /* roar.mp3 in Resources */,
 				E1FBAD841D9ABF9100691514 /* LaunchScreen.storyboard in Resources */,
 				E1FBAD811D9ABF9100691514 /* Assets.xcassets in Resources */,
 				E18F92671DEB85EC0054D68A /* Raptor.atlas in Resources */,
 				E1F62D911DDA075A00C49D24 /* lose.wav in Resources */,
-				E1F62D901DDA075A00C49D24 /* backgroundMusic.mp3 in Resources */,
 				E1FBAD7F1D9ABF9100691514 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -234,6 +235,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V3L2PL4QC9;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -282,6 +284,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V3L2PL4QC9;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
