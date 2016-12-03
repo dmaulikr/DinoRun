@@ -15,8 +15,10 @@ class GameScene: SKScene {
   let playerRotateRadiansPerSec:CGFloat = 4.0 * π
   let playerMovePointsPerSec: CGFloat = 300.0
   let eggMovePointsPerSec: CGFloat = 300.0
-  let enemyRunningAnimation: SKAction
   let roarSound: SKAction = SKAction.playSoundFileNamed("roar.mp3", waitForCompletion: false)
+  let livesLabel = SKLabelNode(fontNamed: Font.chalkboard.rawValue)
+  let container = SKSpriteNode(imageNamed: "container")
+  let controller = SKSpriteNode(imageNamed: "controller")
   var lastUpdateTime: TimeInterval = 0
   var dt: TimeInterval = 0
   var velocity = CGPoint.zero
@@ -27,8 +29,6 @@ class GameScene: SKScene {
   var gameOver = false
   var shouldScrollRight = false
   var shouldScrollLeft = false
-  let container = SKSpriteNode(imageNamed: "container")
-  let controller = SKSpriteNode(imageNamed: "controller")
   var panGeRec: UIPanGestureRecognizer!
   var containerWidthAndHeight: CGFloat!
   var controllerMoving = false
@@ -44,7 +44,6 @@ class GameScene: SKScene {
     for i in 1...8 {
       textures.append(SKTexture(imageNamed: "wRun\(i)"))
     }
-    enemyRunningAnimation = SKAction.animate(with: textures, timePerFrame: 0.1)
     super.init(size: size)
   }
   
@@ -88,6 +87,16 @@ class GameScene: SKScene {
     panGeRec = UIPanGestureRecognizer(target: self, action: #selector(GameScene.handlePan(_:)))
     view.addGestureRecognizer(panGeRec)
     setCameraPosition(position: CGPoint(x: size.width/2, y: size.height/2))
+    livesLabel.text = "Lives: X"
+    livesLabel.fontColor = SKColor.black
+    livesLabel.fontSize = 100
+    livesLabel.zPosition = 100
+    livesLabel.horizontalAlignmentMode = .left
+    livesLabel.verticalAlignmentMode = .bottom
+    livesLabel.position = CGPoint(x: -playableRect.size.width/2 + CGFloat(20),
+                                  y: -playableRect.size.height/2 - CGFloat(160) + overlapAmount() / 2)
+      cameraNode.addChild(livesLabel)
+    UIFont.familyNames.map {UIFont.fontNames(forFamilyName: $0)}.forEach {(n:[String]) in n.forEach {print($0)}}
   }
   
   override func update(_ currentTime: TimeInterval) {
@@ -202,6 +211,7 @@ class GameScene: SKScene {
       let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
       view?.presentScene(gameOverScene, transition: reveal)
     }
+    livesLabel.text = "Lives: \(lives)"
   }
   
   func loseEggs() {
@@ -238,7 +248,6 @@ class GameScene: SKScene {
       y: CGFloat.random(min: cameraRect.minY + enemy.size.height / 2, max: cameraRect.maxY - enemy.size.height/2))
     enemy.zPosition = 50
     addChild(enemy)
-    enemy.run(SKAction.repeatForever(enemyRunningAnimation))
     let enemyMoveDuration: TimeInterval = 7.0
     let screensToMove: CGFloat = 3.0
     let actionMove = SKAction.moveBy(x: -size.width * screensToMove, y: 0, duration: enemyMoveDuration * TimeInterval(screensToMove))
