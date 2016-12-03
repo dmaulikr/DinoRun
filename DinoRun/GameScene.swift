@@ -17,6 +17,7 @@ class GameScene: SKScene {
   let eggMovePointsPerSec: CGFloat = 300.0
   let roarSound: SKAction = SKAction.playSoundFileNamed("roar.mp3", waitForCompletion: false)
   let livesLabel = SKLabelNode(fontNamed: Font.chalkboard.rawValue)
+  let eggsLabel = SKLabelNode(fontNamed: Font.chalkboard.rawValue)
   let container = SKSpriteNode(imageNamed: "container")
   let controller = SKSpriteNode(imageNamed: "controller")
   var lastUpdateTime: TimeInterval = 0
@@ -87,7 +88,6 @@ class GameScene: SKScene {
     panGeRec = UIPanGestureRecognizer(target: self, action: #selector(GameScene.handlePan(_:)))
     view.addGestureRecognizer(panGeRec)
     setCameraPosition(position: CGPoint(x: size.width/2, y: size.height/2))
-    livesLabel.text = "Lives: X"
     livesLabel.fontColor = SKColor.black
     livesLabel.fontSize = 100
     livesLabel.zPosition = 100
@@ -95,8 +95,15 @@ class GameScene: SKScene {
     livesLabel.verticalAlignmentMode = .bottom
     livesLabel.position = CGPoint(x: -playableRect.size.width/2 + CGFloat(20),
                                   y: -playableRect.size.height/2 - CGFloat(160) + overlapAmount() / 2)
-      cameraNode.addChild(livesLabel)
-    UIFont.familyNames.map {UIFont.fontNames(forFamilyName: $0)}.forEach {(n:[String]) in n.forEach {print($0)}}
+    cameraNode.addChild(livesLabel)
+    eggsLabel.fontColor = SKColor.black
+    eggsLabel.fontSize = 100
+    eggsLabel.zPosition = 100
+    eggsLabel.horizontalAlignmentMode = .right
+    eggsLabel.verticalAlignmentMode = .bottom
+    eggsLabel.position = CGPoint(x: playableRect.size.width/2 - CGFloat(20),
+                                 y: -playableRect.size.height/2 - CGFloat(160) + overlapAmount() / 2)
+    cameraNode.addChild(eggsLabel)
   }
   
   override func update(_ currentTime: TimeInterval) {
@@ -212,6 +219,7 @@ class GameScene: SKScene {
       view?.presentScene(gameOverScene, transition: reveal)
     }
     livesLabel.text = "Lives: \(lives)"
+    eggsLabel.text = "Eggs: \(trainCount)"
   }
   
   func loseEggs() {
