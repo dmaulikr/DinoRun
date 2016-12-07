@@ -37,14 +37,10 @@ class GameScene: SKScene {
   var currentDirection = Direction()
 
   override init(size: CGSize) {
-    let maxAspectRatio:CGFloat = 16.0/9.0
+    let maxAspectRatio:CGFloat = 16.0 / 9.0
     let playableHeight = size.width / maxAspectRatio
-    let playableMargin = (size.height-playableHeight)/2.0
+    let playableMargin = (size.height - playableHeight) / 2.0
     playableRect = CGRect(x: 0, y: playableMargin, width: size.width, height: playableHeight)
-    var textures:[SKTexture] = []
-    for i in 1...8 {
-      textures.append(SKTexture(imageNamed: "wRun\(i)"))
-    }
     super.init(size: size)
   }
   
@@ -72,7 +68,6 @@ class GameScene: SKScene {
     run(SKAction.repeatForever(SKAction.sequence([SKAction.run(spawnEgg), SKAction.wait(forDuration: 1.0)])))
     addChild(cameraNode)
     camera = cameraNode
-    
     container.xScale = 3.0
     container.yScale = 3.0
     controller.xScale = 3.0
@@ -372,39 +367,32 @@ class GameScene: SKScene {
   
   func getCameraPosition() -> CGPoint {
     return CGPoint(x: cameraNode.position.x, y: cameraNode.position.y +
-      overlapAmount()/2)
+      overlapAmount() / 2)
   }
   
   func setCameraPosition(position: CGPoint) {
     cameraNode.position = CGPoint(x: position.x, y: position.y -
-      overlapAmount()/2)
+      overlapAmount() / 2)
   }
   
   func moveCamera() {
-    if shouldScrollRight {
+    if shouldScrollLeft || shouldScrollRight {
+      var amountMultiplier: CGFloat = 1.0
+      if shouldScrollLeft {
+        amountMultiplier = -1.0
+      }
       let backgroundVelocity = CGPoint(x: playerMovePointsPerSec, y: 0)
       let amountToMove = backgroundVelocity * CGFloat(dt)
-      cameraNode.position += amountToMove
-      controller.position += amountToMove
-      container.position += amountToMove
+      cameraNode.position += amountToMove * amountMultiplier
+      controller.position += amountToMove * amountMultiplier
+      container.position += amountToMove * amountMultiplier
       controllerPosition = container.position
       enumerateChildNodes(withName: "background") { node, _ in
         let background = node as! SKSpriteNode
-        if background.position.x + background.size.width < self.cameraRect.origin.x {
+        if self.shouldScrollRight && background.position.x + background.size.width < self.cameraRect.origin.x {
           background.position = CGPoint(x: background.position.x + background.size.width * 3, y: background.position.y)
         }
-      }
-    }
-    else if shouldScrollLeft {
-      let backgroundVelocity = CGPoint(x: playerMovePointsPerSec, y: 0)
-      let amountToMove = backgroundVelocity * CGFloat(dt)
-      cameraNode.position -= amountToMove
-      controller.position -= amountToMove
-      container.position -= amountToMove
-      controllerPosition = container.position
-      enumerateChildNodes(withName: "background") { node, _ in
-        let background = node as! SKSpriteNode
-        if background.position.x - background.size.width > self.cameraRect.origin.x {
+        else if self.shouldScrollLeft && background.position.x - background.size.width > self.cameraRect.origin.x {
           background.position = CGPoint(x: background.position.x - background.size.width * 3, y: background.position.y)
         }
       }
