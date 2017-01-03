@@ -87,31 +87,6 @@ class Dinosaur: SKSpriteNode {
   }
   
   func setState(dinosaurState: DinosaurState, direction: Direction) {
-//    removeAllActions()
-    
-//    func startZombieAnimation() {
-//      if zombie.actionForKey("animation") == nil {
-//        zombie.runAction(
-//          SKAction.repeatActionForever(zombieAnimation),
-//          withKey: "animation")
-//      }
-//    }
-//    
-//    func stopZombieAnimation() {
-//      zombie.removeActionForKey("animation")
-//    }
-    
-//    state = dinosaurState
-//    self.direction = direction
-//    switch state {
-//    case .idle:
-//      runAction(SKAction.repeatActionForever(direction == .east || direction == .northeast || direction == .southeast || direction == .north ? eastIdleAnimation : westIdleAnimation))
-//    case .walk:
-//      runAction(SKAction.repeatActionForever(direction == .east || direction == .northeast || direction == .southeast || direction == .north ? eastWalkAnimation : westWalkAnimation))
-//    case .dead:
-//      runAction(direction == .east || direction == .northeast || direction == .southeast || direction == .north ? eastDeadAnimation : westDeadAnimation)
-//    }
-    
     state = dinosaurState
     self.direction = direction
     switch dinosaurType {
@@ -152,36 +127,4 @@ class Dinosaur: SKSpriteNode {
         run(SKAction.repeatForever(westRunAnimation), withKey: "west run")
     }
   }
-  
-//  func flip() {
-//    let newState: DinosaurState
-//    if state == .walk {
-//      newState = .idle
-//    }
-//    else {
-//      newState = .walk
-//    }
-//    switch direction {
-//    case .east:
-//      setState(dinosaurState: newState, direction: .west)
-//    case .northeast:
-//      setState(dinosaurState: newState, direction: .northwest)
-//    case .southeast:
-//      setState(dinosaurState: newState, direction: .southwest)
-//    case .north:
-//      setState(dinosaurState: newState, direction: .south)
-//    case .west:
-//      setState(dinosaurState: newState, direction: .east)
-//    case .southwest:
-//      setState(dinosaurState: newState, direction: .southeast)
-//    case .northwest:
-//      setState(dinosaurState: newState, direction: .northwest)
-//    case .south:
-//      setState(dinosaurState: newState, direction: .north)
-//    case .center:
-//      setState(dinosaurState: newState, direction: .east)
-//    case .error:
-//      fatalError("invalid direction")
-//    }
-//  }
 }

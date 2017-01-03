@@ -66,6 +66,7 @@ class GameScene: SKScene {
     addChild(player)
     run(SKAction.repeatForever(SKAction.sequence([SKAction.run(spawnEnemy), SKAction.wait(forDuration: 2.0)])))
     run(SKAction.repeatForever(SKAction.sequence([SKAction.run(spawnEgg), SKAction.wait(forDuration: 1.0)])))
+    run(SKAction.repeatForever(SKAction.sequence([SKAction.run(spawnFern), SKAction.wait(forDuration: 1.0)])))
     addChild(cameraNode)
     camera = cameraNode
     container.xScale = 3.0
@@ -257,6 +258,23 @@ class GameScene: SKScene {
     let actionRemove = SKAction.removeFromParent()
     enemy.run(SKAction.sequence([actionMove, actionRemove]))
   }
+
+  func spawnFern() {
+    let fern = Fern()
+    fern.name = "fern"
+    fern.xScale = 0.3
+    fern.yScale = 0.3
+    fern.position = CGPoint(
+      x: cameraRect.maxX + fern.size.width / 2,
+      y: CGFloat.random(min: cameraRect.minY + fern.size.height / 2, max: cameraRect.maxY - fern.size.height/2))
+    fern.zPosition = 50
+    addChild(fern)
+    let fernMoveDuration: TimeInterval = 7.0
+    let screensToMove: CGFloat = 3.0
+    let actionMove = SKAction.moveBy(x: -size.width * screensToMove, y: 0, duration: fernMoveDuration * TimeInterval(screensToMove))
+    let actionRemove = SKAction.removeFromParent()
+    fern.run(SKAction.sequence([actionMove, actionRemove]))
+  }
   
   func spawnEgg() {
     let egg = SKSpriteNode(imageNamed: "egg")
@@ -290,6 +308,10 @@ class GameScene: SKScene {
     egg.zRotation = 0.0
     egg.run(SKAction.colorize(with: SKColor.blue, colorBlendFactor: 0.5, duration: 0.7))
   }
+
+  func playerHitFern(_ fern: Fern) {
+    fern.munch()
+  }
   
   func playerHitEnemy(_ enemy: SKSpriteNode) {
     playerIsInvincible = true
@@ -321,6 +343,16 @@ class GameScene: SKScene {
     }
     for egg in hitEggs {
       playerHitEgg(egg)
+    }
+    var hitFerns: [Fern] = []
+    enumerateChildNodes(withName: "fern") { node, _ in
+      let fern = node as! Fern
+      if fern.frame.intersects(self.player.frame) {
+        hitFerns.append(fern)
+      }
+    }
+    for fern in hitFerns {
+      playerHitFern(fern)
     }
     if !playerIsInvincible {
       var hitEnemies: [SKSpriteNode] = []

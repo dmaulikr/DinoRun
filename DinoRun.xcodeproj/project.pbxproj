@@ -12,6 +12,9 @@
 		E18F91E91DEB5F100054D68A /* Dinosaur.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F91E81DEB5F100054D68A /* Dinosaur.swift */; };
 		E18F92651DEB66F60054D68A /* Stegosaurus.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E18F92641DEB66F60054D68A /* Stegosaurus.atlas */; };
 		E18F92671DEB85EC0054D68A /* Raptor.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E18F92661DEB85EC0054D68A /* Raptor.atlas */; };
+		E19096BA1E1ADDEC00C94974 /* Fern.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E19096B91E1ADDEC00C94974 /* Fern.atlas */; };
+		E19096BC1E1ADF0B00C94974 /* Fern.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19096BB1E1ADF0B00C94974 /* Fern.swift */; };
+		E19096C21E1B20FE00C94974 /* crunch.wav in Resources */ = {isa = PBXBuildFile; fileRef = E19096C11E1B20FE00C94974 /* crunch.wav */; };
 		E1BD77981DF2162500CF4DC7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BD77971DF2162500CF4DC7 /* Font.swift */; };
 		E1E2D3001DED2FB300B8ECED /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */; };
 		E1F62D8C1DD9655F00C49D24 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */; };
@@ -33,6 +36,9 @@
 		E18F91E81DEB5F100054D68A /* Dinosaur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dinosaur.swift; sourceTree = "<group>"; };
 		E18F92641DEB66F60054D68A /* Stegosaurus.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Stegosaurus.atlas; sourceTree = "<group>"; };
 		E18F92661DEB85EC0054D68A /* Raptor.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Raptor.atlas; sourceTree = "<group>"; };
+		E19096B91E1ADDEC00C94974 /* Fern.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Fern.atlas; sourceTree = "<group>"; };
+		E19096BB1E1ADF0B00C94974 /* Fern.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fern.swift; sourceTree = "<group>"; };
+		E19096C11E1B20FE00C94974 /* crunch.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crunch.wav; sourceTree = "<group>"; };
 		E1BD77971DF2162500CF4DC7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
 		E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
@@ -61,6 +67,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E19096BD1E1AE38300C94974 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				E1FBAD801D9ABF9100691514 /* Assets.xcassets */,
+				E19096B91E1ADDEC00C94974 /* Fern.atlas */,
+				E18F92661DEB85EC0054D68A /* Raptor.atlas */,
+				E19096C01E1AE40E00C94974 /* Sounds */,
+				E18F92641DEB66F60054D68A /* Stegosaurus.atlas */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+		E19096C01E1AE40E00C94974 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				E19096C11E1B20FE00C94974 /* crunch.wav */,
+				E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */,
+				E1F62D8E1DDA075A00C49D24 /* lose.wav */,
+				E18F91E41DEA47F20054D68A /* roar.mp3 */,
+				E1F62D8F1DDA075A00C49D24 /* win.wav */,
+			);
+			name = Sounds;
+			sourceTree = "<group>";
+		};
 		E1FBAD691D9ABF9000691514 = {
 			isa = PBXGroup;
 			children = (
@@ -81,24 +111,19 @@
 			isa = PBXGroup;
 			children = (
 				E1FBAD751D9ABF9100691514 /* AppDelegate.swift */,
-				E1FBAD791D9ABF9100691514 /* GameScene.swift */,
+				E19096BD1E1AE38300C94974 /* Assets */,
 				E18F91E81DEB5F100054D68A /* Dinosaur.swift */,
-				E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */,
-				E18F92641DEB66F60054D68A /* Stegosaurus.atlas */,
-				E1FBAD7B1D9ABF9100691514 /* GameViewController.swift */,
-				E1FBAD7D1D9ABF9100691514 /* Main.storyboard */,
-				E1FBAD801D9ABF9100691514 /* Assets.xcassets */,
-				E1FBAD821D9ABF9100691514 /* LaunchScreen.storyboard */,
 				E18F91E61DEB59570054D68A /* Direction.swift */,
-				E1FBAD851D9ABF9100691514 /* Info.plist */,
-				E1FBAD8B1D9B15FD00691514 /* MyUtils.swift */,
+				E19096BB1E1ADF0B00C94974 /* Fern.swift */,
 				E1BD77971DF2162500CF4DC7 /* Font.swift */,
+				E1F62D8B1DD9655F00C49D24 /* GameOverScene.swift */,
+				E1FBAD791D9ABF9100691514 /* GameScene.swift */,
+				E1FBAD7B1D9ABF9100691514 /* GameViewController.swift */,
+				E1FBAD851D9ABF9100691514 /* Info.plist */,
+				E1FBAD821D9ABF9100691514 /* LaunchScreen.storyboard */,
+				E1FBAD7D1D9ABF9100691514 /* Main.storyboard */,
 				E1F62D931DDA226800C49D24 /* MainMenuScene.swift */,
-				E1E2D2FF1DED2FB300B8ECED /* backgroundMusic.mp3 */,
-				E18F92661DEB85EC0054D68A /* Raptor.atlas */,
-				E18F91E41DEA47F20054D68A /* roar.mp3 */,
-				E1F62D8E1DDA075A00C49D24 /* lose.wav */,
-				E1F62D8F1DDA075A00C49D24 /* win.wav */,
+				E1FBAD8B1D9B15FD00691514 /* MyUtils.swift */,
 			);
 			path = DinoRun;
 			sourceTree = "<group>";
@@ -163,9 +188,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E19096BA1E1ADDEC00C94974 /* Fern.atlas in Resources */,
 				E1F62D921DDA075A00C49D24 /* win.wav in Resources */,
 				E18F92651DEB66F60054D68A /* Stegosaurus.atlas in Resources */,
 				E1E2D3001DED2FB300B8ECED /* backgroundMusic.mp3 in Resources */,
+				E19096C21E1B20FE00C94974 /* crunch.wav in Resources */,
 				E18F91E51DEA47F20054D68A /* roar.mp3 in Resources */,
 				E1FBAD841D9ABF9100691514 /* LaunchScreen.storyboard in Resources */,
 				E1FBAD811D9ABF9100691514 /* Assets.xcassets in Resources */,
@@ -182,6 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E19096BC1E1ADF0B00C94974 /* Fern.swift in Sources */,
 				E18F91E71DEB59570054D68A /* Direction.swift in Sources */,
 				E1F62D941DDA226800C49D24 /* MainMenuScene.swift in Sources */,
 				E1F62D8C1DD9655F00C49D24 /* GameOverScene.swift in Sources */,
